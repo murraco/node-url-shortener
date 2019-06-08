@@ -10,6 +10,12 @@
 ![](https://img.shields.io/badge/express-✓-blue.svg)
 ![](https://img.shields.io/badge/sequelize-✓-blue.svg)
 
+***
+
+<h3 align="center">Help this repo with a :star: if it's useful for you! :blush:</h3>
+
+***
+
 # File structure
 
 ```
