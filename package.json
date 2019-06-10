@@ -2,8 +2,7 @@
   "name": "url-shortener",
   "version": "1.0.0",
   "description": "Url Shortener",
-  "author": "Mauricio Urraco mauriurraco@gmail.com",
-  "homepage": "https://github.com/murraco/",
+  "author": "Mauricio Urraco <mauriurraco@gmail.com>",
   "license": "MIT",
   "main": "index.js",
   "scripts": {
