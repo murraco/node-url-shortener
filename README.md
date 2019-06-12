@@ -104,9 +104,19 @@ You will also have short URLs since the number of URLs you can have is 36^n wher
   $ sudo n stable
   ```
   
-2. Configure your database and jsonwebtoken in `config/env`
+2. Configure your database and jsonwebtoken in `config/env`. For example `config/env/development.js` would look like this:
 
-  :TODO
+  ```js
+  module.exports = {
+    mysql: {
+      host: 'localhost',
+      port: 3306,
+      database: 'shortener_dev',
+      username: 'root',
+      password: '',
+    }
+  };
+  ```
   
 3. Fork this repository and clone it
   
