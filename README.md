@@ -98,61 +98,76 @@ You will also have short URLs since the number of URLs you can have is 36^n wher
 
 1. Make sure you have the latest stable version of Node.js installed
 
-  ```
-  $ sudo npm cache clean -f
-  $ sudo npm install -g n
-  $ sudo n stable
-  ```
-  
+```
+$ sudo npm cache clean -f
+$ sudo npm install -g n
+$ sudo n stable
+```
+
 2. Configure your database and jsonwebtoken in `config/env`. For example `config/env/development.js` would look like this:
 
-  ```js
-  module.exports = {
-    mysql: {
-      host: 'localhost',
-      port: 3306,
-      database: 'shortener_dev',
-      username: 'root',
-      password: '',
-    }
-  };
-  ```
+```js
+module.exports = {
+	mysql: {
+		host: 'localhost',
+		port: 3306,
+		database: 'shortener_dev',
+		username: 'root',
+		password: '',
+	}
+};
+```
   
 3. Fork this repository and clone it
   
-  ```
-  $ git clone https://github.com/<your-user>/node-es6-url-shortener
-  ```
+```
+$ git clone https://github.com/<your-user>/node-es6-url-shortener
+```
   
 4. Navigate into the folder  
 
-  ```
-  $ cd node-es6-url-shortener
-  ```
+```
+$ cd node-es6-url-shortener
+```
   
 5. Install NPM dependencies
 
-  ```
-  $ npm install
-  ```
+```
+$ npm install
+```
   
-6. Run the project
+6. Make sure you have a MySQL DB up and running, if you don't, using docker is the easiest way
 
-  ```
-  $ node index.js
-  ```
-  
-7. Or use `nodemon` for live-reload
-  
-  ```
-  $ npm start
-  ```
-  
-  > `npm start` will run `nodemon index.js`.
-  
-8. Navigate to `http://localhost:3000` in your browser to test it!
+```
+$ docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -t mysql -d mysql
+```
+Login into the container, update the root user and create databases
 
-9. If you want to execute the tests
+```
+$ docker exec -it <CONTAINER ID> mysql -uroot
+$ ALTER USER root IDENTIFIED WITH mysql_native_password BY 'root';
+$ CREATE DATABASE shortener_dev;
+$ CREATE DATABASE shortener_dev_dev;
+$ CREATE DATABASE shortener_dev_test;
+```
+
+7. Run the project
+
+```
+$ node index.js
+```
+  
+8. Or use `nodemon` for live-reload
+  
+```
+$ npm start
+```
+
+> `npm start` will run `nodemon index.js`.
+
+9. Navigate to `http://localhost:3000` in your browser to test it!
+
+10. If you want to execute the tests
 
 ```
 $ npm test
