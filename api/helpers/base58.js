@@ -1,4 +1,4 @@
-const alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
+const alphabet = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
 const base = alphabet.length;
 
 function encode(num) {
@@ -16,7 +16,7 @@ function decode(str) {
   while (str) {
     const index = alphabet.indexOf(str[0]);
     const power = str.length - 1;
-    decoded += index * (Math.pow(base, power));
+    decoded += index * (base ** power);
     str = str.substring(1);
   }
   return decoded;

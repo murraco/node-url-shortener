@@ -5,5 +5,5 @@ module.exports = {
     database: 'shortener',
     username: 'root',
     password: 'root',
-  }
+  },
 };

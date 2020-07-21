@@ -3,8 +3,7 @@ const urlRoutes = require('./url');
 
 const router = express.Router();
 
-router.get('/api-status', (req, res) =>
-  res.json({ status: "ok" }));
+router.get('/api-status', (req, res) => res.json({ status: 'ok' }));
 
 router.use('/', urlRoutes);
 

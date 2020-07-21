@@ -1,13 +1,12 @@
 process.env.NODE_ENV = 'test';
 
 const request = require('supertest-as-promised');
-const assert = require('chai').assert;
+const { assert } = require('chai');
 const app = require('../config/express');
 const base58 = require('../api/helpers/base58');
 const Url = require('../api/models/Url');
 
 describe('Url', () => {
-
   before(async () => {
     await Url.sync({ force: true });
   });
@@ -34,5 +33,4 @@ describe('Url', () => {
         .expect(302, done);
     });
   });
-
 });
