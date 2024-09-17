@@ -10,7 +10,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "body-parser": "^1.20.1",
+    "body-parser": "^1.20.3",
     "express": "^4.20.0",
     "mysql2": "^3.9.8",
     "nodemon": "^2.0.20",
