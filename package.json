@@ -14,7 +14,7 @@
     "express": "^4.22.1",
     "mysql2": "^3.9.8",
     "nodemon": "^2.0.20",
-    "sequelize": "^6.29.0"
+    "sequelize": "^6.37.8"
   },
   "devDependencies": {
     "chai": "^4.2.0",
