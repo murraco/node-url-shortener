@@ -1,29 +1,27 @@
-# Node ES6 URL Shortener
+# Node URL Shortener
 
 ![](https://img.shields.io/badge/node-success-brightgreen.svg)
 ![](https://img.shields.io/badge/test-success-brightgreen.svg)
 
-# Stack
+## Stack
 
-![](https://img.shields.io/badge/node_8-✓-blue.svg)
+![](https://img.shields.io/badge/node_18+-✓-blue.svg)
 ![](https://img.shields.io/badge/ES6-✓-blue.svg)
 ![](https://img.shields.io/badge/express-✓-blue.svg)
 ![](https://img.shields.io/badge/sequelize-✓-blue.svg)
 
-# File structure
+## File structure
 
 ```
-node-es6-url-shortener/
+node-url-shortener/
 │
 ├── api/
 │   ├── controllers/
 │   │   └── UrlController.js
-│   │
 │   ├── models/
 │   │   └── Url.js
-│   │
 │   └── helpers/
-│      └── base58.js
+│       └── base58.js
 │
 ├── config/
 │   ├── env/
@@ -31,151 +29,169 @@ node-es6-url-shortener/
 │   │   ├── index.js
 │   │   ├── production.js
 │   │   └── test.js
-│   │
+│   ├── middleware/
+│   │   └── errorHandler.js
 │   ├── routes/
 │   │   ├── index.js
 │   │   └── url.js
-│   │
+│   ├── database.js          * Sequelize CLI (migrations)
 │   ├── express.js
 │   └── sequelize.js
 │
+├── migrations/              * Sequelize migrations
+├── seeders/
 ├── view/
 │   ├── css/
-│   │   └── styles.css
-│   │
 │   ├── javascript/
 │   │   └── shorten.js
-│   │
 │   └── index.html
 │
 ├── test/
 │   └── url.test.js
 │
-├── .eslintrc                     * ESLint configuration file
-├── .gitignore                    * Example git ignore file
-├── index.mjs                     * Entry point of our Node's app
-├── LICENSE                       * MIT License
-├── package.json                  * Defines our JavaScript dependencies
-├── package-lock.json             * Defines our exact JavaScript dependencies tree
-└── README.md                     * This file
+├── .eslintrc.json
+├── .gitignore
+├── .sequelizerc
+├── index.js                 * Application entry point
+├── LICENSE
+├── package.json
+├── package-lock.json
+└── README.md
 ```
 
-# Screenshot
+## Screenshot
 
 <p align="center">
-  <img src="https://github.com/murraco/node-es6-url-shortener/blob/master/screenshot.png" width="90%" />
+  <img src="https://github.com/murraco/node-url-shortener/blob/master/screenshot.png?raw=1" width="90%" alt="App screenshot" />
 </p>
 
-# Introduction
+## Introduction
 
-## What's a URL Shortener?
+### What is a URL shortener?
 
- URL shortening is a technique to convert a long URL (site or page address) to a shorter version. This shorter version of the URL is usually cleaner and easier to share or remember. When someone accesses the shortened address, the browser redirects to the original (large) url address. It is also called URL redirection or URL redirect.
+URL shortening turns a long URL into a shorter one that redirects to the original. The short link is easier to share and remember.
 
-For example, the large version of this url:
-http://en.wikipedia.org/wiki/URL_shortening
+### How does this project implement it?
 
-Can be shortened with bit.do service to this small address, that redirects to the previous longer address:
-http://bit.do/urlwiki
+The database stores each URL with an auto-increment numeric `id`. The short code in the path is that `id` encoded in **Base58** (alphanumeric, excluding ambiguous characters like `0`, `O`, `I`, `l`). When someone opens `/:encodedId`, the server decodes it to `id`, loads the row, and redirects to `longUrl`.
 
-## How does it work?
+There is a **unique index** on `longUrl` so the same URL is never stored twice; concurrent `POST` requests are handled with `findOrCreate` and a fallback if a uniqueness race occurs.
 
-Essentially, your database has 3 fields: `primaryKey`, `shortCode` and `targetURL`.
+## Requirements
 
-Normally the `shortCode` is simply the `primaryKey` (which is an int) converted to another base. So for instance base 36 (so 0 through 9, and then 'a' through 'z').
+- **Node.js** 18 or newer (LTS recommended)
+- **MySQL** 5.7+ or 8.x
 
-This makes it easy to look up the `targetURL` in the database, since you can just decode it to base 10 and find the primary key.
+## Environment variables
 
-You will also have short URLs since the number of URLs you can have is 36^n where n is the number of characters in the shortened URL. So you can see that just with 4 letters you can have a possible of 2,313,441 different URLs. If you use capital letters (a larger base), this gets even larger. 
+| Variable | Description | Default (from env files) |
+| -------- | ----------- | ------------------------- |
+| `NODE_ENV` | `development`, `test`, or `production` | `development` |
+| `PORT` | HTTP port | `3000` |
+| `DB_HOST` | MySQL host | `localhost` |
+| `DB_PORT` | MySQL port | `3306` |
+| `DB_NAME` | Database name | `shortener_dev` / `shortener_test` / `shortener` by environment |
+| `DB_USER` | MySQL user | `root` |
+| `DB_PASSWORD` | MySQL password | `root` (override in production) |
+| `PUBLIC_URL` or `BASE_URL` | Public base URL for short links (no trailing slash), e.g. `https://short.example.com` | If unset, derived from the incoming request (`req.protocol` and `Host`) |
+| `TRUST_PROXY` | Set to `true` or `1` if the app sits behind a reverse proxy so `X-Forwarded-*` is honored | unset |
 
-## How to use this code?
+Copy values into a `.env` file or your host’s secret manager. The `.env` file is gitignored; do not commit real passwords.
 
-1. Make sure you have the latest stable version of Node.js installed
+## Installation
 
-```
-$ sudo npm cache clean -f
-$ sudo npm install -g n
-$ sudo n stable
-```
+1. Clone the repository:
 
-2. Configure your database and jsonwebtoken in `config/env`. For example `config/env/development.js` would look like this:
-
-```js
-module.exports = {
-  mysql: {
-    host: 'localhost',
-    port: 3306,
-    database: 'shortener_dev',
-    username: 'root',
-    password: '',
-  }
-};
-```
-  
-3. Fork this repository and clone it
-  
-```
-$ git clone https://github.com/<your-user>/node-es6-url-shortener
-```
-  
-4. Navigate into the folder  
-
-```
-$ cd node-es6-url-shortener
-```
-  
-5. Install NPM dependencies
-
-```
-$ npm install
-```
-  
-6. Make sure you have a MySQL DB up and running, if you don't, using docker is the easiest way
-
-```
-$ docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -t mysql -d mysql
-```
-Login into the container, update the root user and create databases
-
-```
-$ docker exec -it <CONTAINER ID> mysql -uroot
-$ ALTER USER root IDENTIFIED WITH mysql_native_password BY 'root';
-$ CREATE DATABASE shortener_dev;
-$ CREATE DATABASE shortener_dev_dev;
-$ CREATE DATABASE shortener_dev_test;
+```bash
+git clone https://github.com/murraco/node-url-shortener.git
+cd node-url-shortener
 ```
 
-7. Run the project
+2. Install dependencies:
 
-```
-$ node index.js
-```
-  
-8. Or use `nodemon` for live-reload
-  
-```
-$ npm start
+```bash
+npm install
 ```
 
-> `npm start` will run `nodemon index.js`.
+3. Configure the database using the variables above (optional `.env` or shell exports). The files under `config/env/` only supply defaults and read from `process.env`.
 
-9. Navigate to `http://localhost:3000` in your browser to test it!
+## Database setup
 
-10. If you want to execute the tests
+### With Docker (MySQL 8)
 
+```bash
+docker run -d --name mysql-shortener \
+  -p 3306:3306 \
+  -e MYSQL_ROOT_PASSWORD=root \
+  mysql:8
 ```
-$ npm test
+
+Create the databases (adjust user/password if needed):
+
+```bash
+docker exec -it mysql-shortener mysql -uroot -proot -e "
+  CREATE DATABASE IF NOT EXISTS shortener_dev;
+  CREATE DATABASE IF NOT EXISTS shortener_test;
+  CREATE DATABASE IF NOT EXISTS shortener;
+"
 ```
 
-> `npm test` will run `mocha`.
+### Migrations (production and clean setups)
 
-# Contribution
+After MySQL is running and credentials match `config/env` (or your env vars), apply the schema:
+
+```bash
+npm run migrate
+```
+
+In **development** only, the app also runs `sequelize.sync()` on startup so tables are created if missing. **Production** does not sync on startup; run migrations before deploying.
+
+## Running the app
+
+- **Production-style:** `npm start` → runs `node index.js` (connects to DB, no `sync` when `NODE_ENV=production`).
+- **Development with reload:** `npm run dev` → `nodemon index.js`.
+
+Then open `http://localhost:3000` (or your `PORT`).
+
+## API
+
+### `GET /api-status`
+
+Health check. **Response:** `{ "status": "ok" }`
+
+### `POST /api/shorten`
+
+Creates or returns an existing short link for a URL.
+
+- **Body (JSON):** `{ "url": "https://example.com/path" }`
+- **Success:** `201` — `{ "shortUrl": "<public-base>/<base58-id>" }`
+- **Errors:** `400` — `{ "error": "..." }` for missing/invalid URL or non-http(s) scheme
+- **Server errors:** `500` — `{ "error": "Internal server error" }`
+
+Register new single-segment routes **before** `/:encodedId` in the router so they are not treated as short codes.
+
+### `GET /:encodedId`
+
+Redirects (`302`) to the stored URL, or to the site root if the code is unknown.
+
+## Testing
+
+Tests use `NODE_ENV=test` (see `test/url.test.js`), the `shortener_test` database (unless overridden with `DB_NAME`), and `Url.sync({ force: true })` in a `before` hook to reset the table.
+
+Requirements: MySQL running and the test database created.
+
+```bash
+npm test
+```
+
+`npm audit` was run after dependency updates; a few advisories may remain in transitive dev dependencies (for example Mocha). Re-run `npm audit` periodically.
+
+## Contributing
 
 - Report issues
-- Open pull request with improvements
-- Spread the word
-- Reach out to me directly at <mauriurraco@gmail.com>
+- Open pull requests with improvements
+- Contact: mauriurraco@gmail.com
 
-# Buy me a coffee to show your support!
+## Buy me a coffee
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/murraco)

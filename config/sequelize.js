@@ -6,10 +6,7 @@ const sequelize = new Sequelize(config.mysql.database, config.mysql.username, co
   host: config.mysql.host,
   port: config.mysql.port,
   dialect: 'mysql',
-  logging: false, // Disable logging
-  operatorsAliases: false, // Disable aliases,
+  logging: false,
 });
-
-sequelize.authenticate();
 
 module.exports = { sequelize, Sequelize };

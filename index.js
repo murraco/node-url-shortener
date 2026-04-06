@@ -1,10 +1,22 @@
+const { sequelize } = require('./config/sequelize');
+// Ensure models are registered before sync
+require('./api/models/Url');
 const app = require('./config/express');
-const Url = require('./api/models/Url');
 
-Url.sync({ force: true });
+async function start() {
+  await sequelize.authenticate();
 
-const port = parseInt(process.env.PORT, 10) || 3000;
+  if (process.env.NODE_ENV === 'development') {
+    await sequelize.sync();
+  }
 
-app.listen(port, () => {
-  console.log(`The server is running at localhost: ${port}`);
+  const port = parseInt(process.env.PORT, 10) || 3000;
+  app.listen(port, () => {
+    console.log(`The server is running at localhost:${port}`);
+  });
+}
+
+start().catch((err) => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
 });
