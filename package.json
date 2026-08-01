@@ -13,7 +13,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "express": "^4.22.2",
+    "express": "^5.2.1",
     "mysql2": "^3.9.8",
     "sequelize": "^6.37.8"
   },
